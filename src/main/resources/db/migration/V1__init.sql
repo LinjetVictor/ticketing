@@ -44,3 +44,35 @@ CREATE TABLE seat_hold_seat (
   CONSTRAINT fk_hs_hold FOREIGN KEY (hold_id) REFERENCES seat_hold (id) ON DELETE CASCADE,
   CONSTRAINT fk_hs_seat FOREIGN KEY (seat_id) REFERENCES seat (id)
 ) ENGINE=InnoDB;
+
+CREATE TABLE booking (
+  id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+  reference      VARCHAR(20)  NOT NULL,
+  event_id       BIGINT       NOT NULL,
+  hold_id        VARCHAR(36)  NOT NULL,
+  customer_name  VARCHAR(200) NOT NULL,
+  customer_email VARCHAR(320) NOT NULL,
+  status         VARCHAR(20)  NOT NULL,
+  total_cents    BIGINT       NOT NULL,
+  created_at     DATETIME(6)  NOT NULL,
+  version        BIGINT       NOT NULL DEFAULT 0,
+  CONSTRAINT uq_booking_reference UNIQUE (reference),
+  CONSTRAINT uq_booking_hold UNIQUE (hold_id),
+  CONSTRAINT fk_booking_event FOREIGN KEY (event_id) REFERENCES event (id)
+) ENGINE=InnoDB;
+
+CREATE TABLE booking_seat (
+  id             BIGINT AUTO_INCREMENT PRIMARY KEY,
+  booking_id     BIGINT       NOT NULL,
+  seat_id        BIGINT       NOT NULL,
+  -- Equals seat_id while the booking is active, NULL once cancelled. The UNIQUE index makes the
+  -- database itself refuse a second active booking of the same seat (NULLs never collide),
+  -- even if every application-level safeguard were bypassed.
+  active_seat_id BIGINT       NULL,
+  section        VARCHAR(50)  NOT NULL,
+  label          VARCHAR(20)  NOT NULL,
+  price_cents    BIGINT       NOT NULL,
+  CONSTRAINT uq_booking_seat_active UNIQUE (active_seat_id),
+  CONSTRAINT fk_bs_booking FOREIGN KEY (booking_id) REFERENCES booking (id),
+  CONSTRAINT fk_bs_seat FOREIGN KEY (seat_id) REFERENCES seat (id)
+) ENGINE=InnoDB;

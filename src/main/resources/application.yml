@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: ticketing
+  datasource:
+    # innodb_lock_wait_timeout: a pessimistic lock wait fails fast (5s) instead of the 50s default.
+    url: jdbc:mysql://localhost:3307/ticketing?serverTimezone=UTC&sessionVariables=innodb_lock_wait_timeout=5
+    username: ticketing
+    password: ticketing
+    hikari:
+      maximum-pool-size: 30
+  jpa:
+    open-in-view: false            # no lazy loading from views; services return what the page needs
+    hibernate:
+      ddl-auto: none               # schema is owned by Flyway (db/migration)
+  flyway:
+    enabled: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2s
+  thymeleaf:
+    cache: false
+
+server:
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+ticketing:
+  currency: USD
+  zone: UTC               # zone used for event wall-clock times and all timestamps
+  seed: true              # create a couple of demo events on an empty database
+  hold:
+    ttl: 5m               # how long a seat hold lasts
+    max-seats: 8          # per hold
+    expiry-grace: 5s      # reaper waits this long past expiry before marking a hold EXPIRED
+  jobs:
+    lock-ttl: 30s         # distributed lock lifetime for scheduled jobs
+    hold-expiry-interval-ms: 10000

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(${event.name})}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="container">
+  <div th:replace="~{fragments :: flash}"></div>
+  <a class="back" th:href="@{/}">All events</a>
+  <h1 th:text="${event.name}">Event</h1>
+  <p class="meta"><span th:text="${event.venue}">Venue</span>,
+    <span th:text="${#temporals.format(event.startsAt, 'EEEE d MMMM yyyy, HH:mm')}">date</span></p>
+  <p th:if="${event.description}" th:text="${event.description}" class="lede"></p>
+
+  <p class="flash error" th:if="${!onSale}">Tickets for this event are not on sale.</p>
+
+  <form id="seatForm" method="post" th:action="@{/events/{id}/holds(id=${event.id})}"
+        th:attr="data-event-id=${event.id},data-max=${maxSeats},data-currency=${currency}">
+    <ul class="legend">
+      <li><span class="swatch available"></span>Available</li>
+      <li><span class="swatch held"></span>Held by someone</li>
+      <li><span class="swatch booked"></span>Booked</li>
+      <li><span class="swatch selected"></span>Your pick</li>
+    </ul>
+
+    <div class="stage">Stage</div>
+
+    <section class="hall-section" th:each="section : ${seatMap.sections()}">
+      <h2 th:text="${section.name()}">Section</h2>
+      <div class="seat-row" th:each="row : ${section.rows()}">
+        <span class="row-label" th:text="${row.label()}">A</span>
+        <label class="seat" th:each="seat : ${row.seats()}"
+               th:classappend="${seat.status().name().toLowerCase()}"
+               th:attr="data-seat-id=${seat.id()},data-price=${seat.priceCents()},title=${seat.label() + ' - ' + currency + ' ' + #numbers.formatDecimal(seat.priceCents() / 100.0, 1, 'COMMA', 2, 'POINT')}">
+          <input type="checkbox" name="seatIds" th:value="${seat.id()}" th:disabled="${!onSale || !seat.available()}">
+          <span th:text="${seat.number()}">1</span>
+        </label>
+      </div>
+    </section>
+
+    <div class="selection-bar">
+      <span id="selSummary">No seats selected</span>
+      <button class="btn" id="holdBtn" type="submit" disabled
+              th:text="'Hold seats for ' + ${holdLabel}">Hold seats</button>
+    </div>
+  </form>
+</main>
+<script th:src="@{/js/seatmap.js}"></script>
+</body>
+</html>

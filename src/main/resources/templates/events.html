@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Events')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="container">
+  <div th:replace="~{fragments :: flash}"></div>
+  <h1>Upcoming events</h1>
+
+  <p class="empty" th:if="${#lists.isEmpty(events)}">
+    Nothing on sale yet. <a th:href="@{/admin/events/new}">Create an event</a> to get started.
+  </p>
+
+  <ul class="stubs">
+    <li class="stub" th:each="s : ${events}">
+      <div class="stub-main">
+        <h2><a th:href="@{/events/{id}(id=${s.event().id})}" th:text="${s.event().name}">Event</a></h2>
+        <p class="venue" th:text="${s.event().venue}">Venue</p>
+        <p class="when" th:text="${#temporals.format(s.event().startsAt, 'EEE d MMM yyyy, HH:mm')}">Date</p>
+      </div>
+      <div class="stub-side">
+        <span class="count" th:text="${s.available()}">0</span>
+        <span class="count-label" th:text="${s.soldOut()} ? 'sold out' : 'seats left'">seats left</span>
+        <a class="btn" th:if="${!s.soldOut()}" th:href="@{/events/{id}(id=${s.event().id})}">Pick seats</a>
+      </div>
+    </li>
+  </ul>
+</main>
+</body>
+</html>

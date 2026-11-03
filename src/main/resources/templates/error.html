@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(${title})}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="container narrow">
+  <h1 th:text="${title}">Error</h1>
+  <p th:text="${message}">Message</p>
+  <p class="muted" th:text="'Error ' + ${status}">Error</p>
+  <p><a th:href="@{/}">Back to events</a></p>
+</main>
+</body>
+</html>

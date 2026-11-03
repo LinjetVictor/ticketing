@@ -1,0 +1,62 @@
+:root {
+  --ink: #16202b;
+  --paper: #eef1f4;
+  --card: #ffffff;
+  --line: #cfd6de;
+  --muted: #5c6877;
+  --accent: #0b6e66;
+  --accent-ink: #ffffff;
+  --available: #d9efe9;
+  --available-line: #0b6e66;
+  --held: #f2c14e;
+  --booked: #9aa5b1;
+  --danger: #a4262c;
+  font-family: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); line-height: 1.5; }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible,
+.seat input:focus-visible + span { outline: 3px solid var(--ink); outline-offset: 2px; }
+
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: .9rem 1.5rem; background: var(--ink); }
+.topbar a { color: #fff; text-decoration: none; }
+.brand { font-weight: 700; font-size: 1.15rem; letter-spacing: .02em; }
+.topbar nav a { margin-left: 1.25rem; opacity: .85; }
+.topbar nav a:hover { opacity: 1; }
+
+.container { max-width: 62rem; margin: 0 auto; padding: 1.5rem 1.25rem 4rem; }
+.container.narrow { max-width: 38rem; }
+h1 { font-size: 2rem; line-height: 1.2; margin: .5rem 0 .25rem; }
+h2 { font-size: 1.15rem; margin: 0 0 .5rem; }
+.meta, .muted, .lede { color: var(--muted); }
+.back { display: inline-block; margin-top: .5rem; }
+.page-head { display: flex; justify-content: space-between; align-items: center; }
+.hidden { display: none; }
+
+.btn { display: inline-block; border: 0; border-radius: 6px; padding: .65rem 1.1rem; background: var(--accent); color: var(--accent-ink);
+  font: inherit; font-weight: 600; text-decoration: none; cursor: pointer; }
+.btn:hover { filter: brightness(1.1); }
+.btn:disabled { background: var(--booked); cursor: not-allowed; filter: none; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+
+.flash { padding: .7rem 1rem; border-radius: 6px; margin: 1rem 0; }
+.flash.error { background: #fbe4e4; color: var(--danger); border: 1px solid #e8b4b6; }
+.flash.success { background: #dff3ea; color: #0a5a46; border: 1px solid #a9d9c6; }
+
+/* Event list: each event is a ticket stub with perforated notches */
+.stubs { list-style: none; padding: 0; margin: 1.5rem 0; display: grid; gap: 1rem; }
+.stub { display: flex; background: var(--card); border: 1px solid var(--line); border-radius: 10px; position: relative; overflow: hidden; }
+.stub-main { flex: 1; padding: 1.1rem 1.4rem; }
+.stub-main h2 { font-size: 1.35rem; margin: 0; }
+.stub-main h2 a { color: var(--ink); text-decoration: none; }
+.stub-main p { margin: .15rem 0; }
+.venue { color: var(--muted); }
+.stub-side { width: 11rem; padding: 1rem; border-left: 2px dashed var(--line); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .15rem; }
+.stub::before, .stub::after { content: ""; position: absolute; right: calc(11rem - 10px); width: 20px; height: 20px; border-radius: 50%; background: var(--paper); border: 1px solid var(--line); }
+.stub::before { top: -11px; }
+.stub::after { bottom: -11px; }
+.count { font-size: 2rem; font-weight: 700; line-height: 1; }
+.count-label { color: var(--muted); margin-bottom: .5rem; }
+.empty { padding: 2rem 0; color: var(--muted); }
+

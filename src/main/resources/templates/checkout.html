@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Checkout')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="container narrow">
+  <div th:replace="~{fragments :: flash}"></div>
+  <h1>Confirm your seats</h1>
+  <p class="meta" th:text="${details.event().name} + ', ' + ${#temporals.format(details.event().startsAt, 'EEE d MMM yyyy, HH:mm')}">Event</p>
+
+  <div class="timer" th:classappend="${!details.active()} ? 'expired'">
+    <span>Time left to complete your order</span>
+    <strong id="countdown" th:attr="data-remaining=${details.secondsRemaining()}"
+            th:text="${details.active()} ? '' : 'Expired'"></strong>
+  </div>
+
+  <div id="expiredNotice" class="flash error" th:classappend="${details.active()} ? 'hidden'">
+    This hold has ended and the seats were released.
+    <a th:href="@{/events/{id}(id=${details.event().id})}">Choose seats again</a>
+  </div>
+
+  <table class="lines">
+    <thead><tr><th>Seat</th><th>Section</th><th class="num">Price</th></tr></thead>
+    <tbody>
+      <tr th:each="s : ${details.seats()}">
+        <td th:text="${s.label}">A1</td>
+        <td th:text="${s.section}">Main</td>
+        <td class="num" th:text="${currency + ' ' + #numbers.formatDecimal(s.priceCents / 100.0, 1, 'COMMA', 2, 'POINT')}">0</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr><td colspan="2">Total</td>
+        <td class="num" th:text="${currency + ' ' + #numbers.formatDecimal(details.totalCents() / 100.0, 1, 'COMMA', 2, 'POINT')}">0</td></tr>
+    </tfoot>
+  </table>
+
+  <form th:if="${details.active()}" method="post" th:action="@{/holds/{id}/confirm(id=${details.holdId()})}"
+        th:object="${confirmForm}" class="stack">
+    <label>Full name
+      <input type="text" th:field="*{name}" autocomplete="name" required>
+      <small class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+    </label>
+    <label>Email
+      <input type="email" th:field="*{email}" autocomplete="email" required>
+      <small class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></small>
+    </label>
+    <div class="actions">
+      <button class="btn" id="confirmBtn" type="submit">Book these seats</button>
+    </div>
+  </form>
+
+  <form th:if="${details.active()}" method="post" th:action="@{/holds/{id}/release(id=${details.holdId()})}">
+    <button class="btn ghost" type="submit">Release seats</button>
+  </form>
+</main>
+<script th:src="@{/js/countdown.js}"></script>
+</body>
+</html>

@@ -88,3 +88,31 @@ h2 { font-size: 1.15rem; margin: 0 0 .5rem; }
   background: var(--card); border: 1px solid var(--line); border-radius: 10px 10px 0 0; padding: .8rem 1.1rem; margin-top: 1rem; }
 #selSummary { font-weight: 600; }
 
+/* Checkout / booking */
+.timer { display: flex; justify-content: space-between; align-items: baseline; background: var(--card); border: 1px solid var(--line);
+  border-left: 5px solid var(--accent); border-radius: 6px; padding: .7rem 1rem; margin: 1rem 0; }
+.timer strong { font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+.timer.expired, .timer strong.expired { border-left-color: var(--danger); color: var(--danger); }
+.lines { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); margin: 1rem 0; }
+.lines th, .lines td { padding: .6rem .8rem; text-align: left; border-bottom: 1px solid var(--line); }
+.lines .num { text-align: right; font-variant-numeric: tabular-nums; }
+.lines tfoot td { font-weight: 700; border-bottom: 0; }
+.stack { display: grid; gap: .9rem; margin: 1rem 0; }
+.stack label { display: grid; gap: .25rem; font-weight: 600; }
+input, textarea, select { font: inherit; padding: .55rem .65rem; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+fieldset { border: 1px solid var(--line); border-radius: 6px; display: grid; gap: .7rem; }
+.field-error { color: var(--danger); font-weight: 400; }
+.actions { display: flex; align-items: center; gap: 1rem; }
+.ticket { background: var(--card); border: 1px solid var(--line); border-left: 8px solid var(--accent); border-radius: 8px; padding: 1.1rem 1.4rem; margin: 1rem 0; }
+.ticket p { margin: .3rem 0; }
+.ref { font-family: ui-monospace, "SFMono-Regular", Menlo, monospace; font-size: 1.4rem; font-weight: 700; letter-spacing: .06em; }
+.ticket-event { font-size: 1.2rem; font-weight: 700; }
+.chip { display: inline-block; background: var(--available); border: 1px solid var(--available-line); border-radius: 999px; padding: .1rem .7rem; margin: 0 .3rem .3rem 0; }
+.total { font-size: 1.25rem; font-weight: 700; }
+
+@media (max-width: 36rem) {
+  .stub { flex-direction: column; }
+  .stub-side { width: auto; border-left: 0; border-top: 2px dashed var(--line); }
+  .stub::before, .stub::after { display: none; }
+  .seat span { width: 1.9rem; height: 1.9rem; }
+}

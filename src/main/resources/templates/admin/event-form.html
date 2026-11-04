@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head(${creating} ? 'New event' : 'Edit event')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="container narrow">
+  <h1 th:text="${creating} ? 'New event' : 'Edit event'">Event</h1>
+
+  <p class="flash error" th:if="${#fields.hasGlobalErrors()}" th:each="e : ${#fields.globalErrors()}" th:text="${e}"></p>
+
+  <form method="post" class="stack" th:object="${eventForm}"
+        th:action="${creating} ? @{/admin/events} : @{/admin/events/{id}(id=${eventForm.id})}">
+    <input type="hidden" th:field="*{version}" th:unless="${creating}">
+
+    <label>Name
+      <input type="text" th:field="*{name}" required>
+      <small class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></small>
+    </label>
+    <label>Venue
+      <input type="text" th:field="*{venue}" required>
+      <small class="field-error" th:if="${#fields.hasErrors('venue')}" th:errors="*{venue}"></small>
+    </label>
+    <label>Description
+      <textarea th:field="*{description}" rows="3"></textarea>
+    </label>
+    <label>Starts
+      <input type="datetime-local" th:field="*{startsAt}" required>
+      <small class="field-error" th:if="${#fields.hasErrors('startsAt')}" th:errors="*{startsAt}"></small>
+    </label>
+    <label>Status
+      <select th:field="*{status}">
+        <option th:each="s : ${statuses}" th:value="${s}" th:text="${s}">ON_SALE</option>
+      </select>
+    </label>
+
+    <fieldset th:if="${creating}">
+      <legend>Seat grid</legend>
+      <label>Section name <input type="text" th:field="*{section}"></label>
+      <label>Rows (1 to 26) <input type="number" th:field="*{rows}" min="1" max="26"></label>
+      <label>Seats per row (1 to 60) <input type="number" th:field="*{seatsPerRow}" min="1" max="60"></label>
+      <label>Ticket price <input type="number" step="0.01" min="0" th:field="*{price}"></label>
+    </fieldset>
+
+    <div class="actions">
+      <button class="btn" type="submit" th:text="${creating} ? 'Create event' : 'Save changes'">Save</button>
+      <a th:href="@{/admin/events}">Cancel</a>
+    </div>
+  </form>
+</main>
+</body>
+</html>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Manage events')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="container">
+  <div th:replace="~{fragments :: flash}"></div>
+  <div class="page-head">
+    <h1>Manage events</h1>
+    <a class="btn" th:href="@{/admin/events/new}">New event</a>
+  </div>
+  <table class="lines">
+    <thead><tr><th>Event</th><th>Starts</th><th>Status</th><th class="num">Seats left</th><th></th></tr></thead>
+    <tbody>
+      <tr th:each="s : ${events}">
+        <td><a th:href="@{/events/{id}(id=${s.event().id})}" th:text="${s.event().name}">Event</a></td>
+        <td th:text="${#temporals.format(s.event().startsAt, 'd MMM yyyy, HH:mm')}">date</td>
+        <td th:text="${s.event().status}">ON_SALE</td>
+        <td class="num" th:text="${s.available() + ' / ' + s.total()}">0</td>
+        <td class="num"><a th:href="@{/admin/events/{id}/edit(id=${s.event().id})}">Edit</a></td>
+      </tr>
+    </tbody>
+  </table>
+</main>
+</body>
+</html>

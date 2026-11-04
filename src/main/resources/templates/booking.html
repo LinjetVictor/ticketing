@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Booking')}"></head>
+<body>
+<header th:replace="~{fragments :: nav}"></header>
+<main class="container narrow">
+  <div th:replace="~{fragments :: flash}"></div>
+  <h1 th:text="${booking.status.name() == 'CONFIRMED'} ? 'You are booked' : 'Booking cancelled'">Booking</h1>
+
+  <div class="ticket">
+    <p class="ref" th:text="${booking.reference}">TKT-XXXXXXXX</p>
+    <p class="ticket-event" th:text="${event.name}">Event</p>
+    <p th:text="${event.venue} + ', ' + ${#temporals.format(event.startsAt, 'EEE d MMM yyyy, HH:mm')}">Venue</p>
+    <p class="seats">
+      <span class="chip" th:each="s : ${booking.seats}" th:text="${s.section + ' ' + s.label}">Main A1</span>
+    </p>
+    <p><span th:text="${booking.customerName}">Name</span> (<span th:text="${booking.customerEmail}">email</span>)</p>
+    <p class="total" th:text="${currency + ' ' + #numbers.formatDecimal(booking.totalCents / 100.0, 1, 'COMMA', 2, 'POINT')}">0</p>
+  </div>
+
+  <form th:if="${canCancel}" method="post" th:action="@{/bookings/{ref}/cancel(ref=${booking.reference})}">
+    <button class="btn ghost" type="submit">Cancel booking</button>
+  </form>
+  <p><a th:href="@{/}">Back to events</a></p>
+</main>
+</body>
+</html>

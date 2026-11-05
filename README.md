@@ -28,3 +28,30 @@ The other browser's seat map turns amber within 5 seconds. Let the countdown run
    |                          d. seat.status=BOOKED (@Version), insert booking ---> UNIQUE(active_seat_id)
    |                          e. afterCommit: release Redis keys
 ```
+
+## Where each requirement lives
+
+| Concern | Mechanism | Code |
+|---|---|---|
+| Temporary holds that expire | One Redis key per held seat with a TTL; Redis enforces expiry, no job needed for correctness | `redis/SeatHoldStore` |
+| Atomic multi-seat hold | Lua script: all seats or none, no interleaving | `SeatHoldStore.ACQUIRE` |
+| No double-booking, layer 1 | Redis hold ownership checked at confirm | `BookingService.confirm` (b) |
+| Layer 2, pessimistic locking | `SELECT ... FOR UPDATE ORDER BY id` on seats; status re-checked under lock | `SeatRepository.lockAllForBooking` |
+| Layer 3, optimistic locking | `@Version` on `Seat`, `Booking`, `SeatHold`, `Event` | domain entities |
+| Layer 4, database guarantee | `UNIQUE(active_seat_id)`, NULL after cancel so seats can be resold | `V1__init.sql`, `BookingSeat` |
+| Optimistic locking with retry | Cancellation retries a fresh transaction on a version conflict | `CancellationService` |
+| Optimistic locking in the UI | Edit form carries the version; stale save returns a 409 page | `EventService.update`, `AdminEventController` |
+| Idempotent confirm | Hold row lock plus `UNIQUE(hold_id)` on booking | `BookingService`, `V1__init.sql` |
+| Transactions | Service-level `@Transactional`; Redis calls kept outside transactions; Redis release in `afterCommit` | services |
+| Scheduled jobs | Hold reaper (`FOR UPDATE SKIP LOCKED`) every 10s; close sales for started events every minute | `job/ScheduledJobs` |
+| One job runner across instances | Redis `SET NX PX` lock with token-checked unlock | `redis/DistributedJobLock` |
+| Live seat map | `/api/events/{id}/seats` polled every 5s | `SeatStatusApi`, `seatmap.js` |
+
+## Design decisions worth knowing
+
+* **Redis is the gate, MySQL is the truth.** A hold is only a Redis key. If Redis loses data (failover), the worst case is two people briefly holding one seat. Confirm then fails for one of them because of the ownership check, the seat lock check and the unique index. Nobody is oversold.
+* **Fail closed.** If Redis is down, creating a hold returns a 503 page. The seat map still renders (without holds).
+* **`createHold` is not `@Transactional`** on purpose, so no DB connection is held while talking to Redis.
+* **Payment** is not implemented. When you add it, charge after the hold and before `confirm`, and never call a payment provider while holding the seat row locks.
+* Times are `LocalDateTime` in `ticketing.zone`. Seat/event/hold ids in URLs: the hold id is a random UUID used as a capability token.
+

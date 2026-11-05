@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
-/** Polled by the seat map page to show holds/bookings made by other people without a reload. */
 @RestController
 public class SeatStatusApi {
 

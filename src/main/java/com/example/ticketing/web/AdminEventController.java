@@ -15,7 +15,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-/** Back-office pages. NOTE: no authentication here - put Spring Security in front of /admin/** before deploying. */
 @Controller
 @RequestMapping("/admin/events")
 public class AdminEventController {

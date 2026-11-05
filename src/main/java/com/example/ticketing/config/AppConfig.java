@@ -9,7 +9,6 @@ import java.time.ZoneId;
 @Configuration
 public class AppConfig {
 
-    /** Single time source for the whole app, so time-dependent logic stays testable. */
     @Bean
     public Clock clock(TicketingProperties props) {
         return Clock.system(ZoneId.of(props.zone()));

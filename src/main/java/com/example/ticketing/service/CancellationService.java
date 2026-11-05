@@ -17,11 +17,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Cancellation uses OPTIMISTIC locking (contrast with BookingService's pessimistic path): conflicts are rare and
- * cheap to retry, so we read without locks and let @Version detect a concurrent change at flush time, then retry
- * the whole transaction. A programmatic TransactionTemplate makes each attempt a fresh transaction.
- */
+// Cancellation uses OPTIMISTIC locking
 @Service
 public class CancellationService {
 

@@ -8,10 +8,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Minimal Redis lock so a scheduled job runs on one app instance at a time (SET NX PX + token-checked unlock).
- * It is an efficiency measure only: the jobs are also safe to run concurrently (row locks + SKIP LOCKED).
- */
+// Minimal Redis lock so a scheduled job runs on one app instance at a time
 @Component
 public class DistributedJobLock {
 

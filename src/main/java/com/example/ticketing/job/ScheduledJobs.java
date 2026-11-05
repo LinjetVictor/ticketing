@@ -27,7 +27,7 @@ public class ScheduledJobs {
         this.props = props;
     }
 
-    /** Reconciles hold rows whose Redis keys have already expired. fixedDelay => runs never overlap on one node. */
+    /** Reconciles hold rows whose Redis keys have already expired */
     @Scheduled(fixedDelayString = "${ticketing.jobs.hold-expiry-interval-ms:10000}")
     public void expireHolds() {
         run("hold-expiry", () -> {
@@ -38,7 +38,7 @@ public class ScheduledJobs {
         });
     }
 
-    /** Stops sales for events that have started. */
+    /** Stops sales for events that have started */
     @Scheduled(cron = "0 * * * * *")
     public void closeStartedEvents() {
         run("event-close", () -> {

@@ -55,3 +55,25 @@ The other browser's seat map turns amber within 5 seconds. Let the countdown run
 * **Payment** is not implemented. When you add it, charge after the hold and before `confirm`, and never call a payment provider while holding the seat row locks.
 * Times are `LocalDateTime` in `ticketing.zone`. Seat/event/hold ids in URLs: the hold id is a random UUID used as a capability token.
 
+## Before production
+
+* Put Spring Security (and CSRF protection) in front of the app; `/admin/**` is currently open.
+* Add a payment step, email confirmation (send from an outbox or `afterCommit`) and per-IP rate limiting on hold creation.
+* For very large venues, replace per-seat `multiGet` with a per-event Redis set or bitmap.
+* Redis Cluster is supported by design: keys use the `{eventId}` hash tag.
+* `ddl-auto` is `none` because Flyway owns the schema. Try `validate` in your environment once the app runs.
+
+## Layout
+
+```
+src/main/java/com/example/ticketing
+  config/      properties, Clock, demo data
+  domain/      JPA entities and enums
+  repository/  Spring Data repositories (locking queries live here)
+  redis/       SeatHoldStore (Lua), DistributedJobLock
+  service/     HoldService, BookingService, CancellationService, EventService, SeatMapService
+  job/         ScheduledJobs
+  web/         Thymeleaf controllers, forms, REST seat-status endpoint, error handling
+src/main/resources/templates, static, db/migration
+src/test/.../SeatBookingConcurrencyIT.java
+```

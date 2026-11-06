@@ -1,6 +1,6 @@
 # Box Office: event ticketing with expiring seat holds
 
-Spring Boot 3.3 / Java 21, Spring Data JPA + MySQL 8, Redis 7, Thymeleaf, Flyway. No Lombok.
+Spring Boot 3.3 / Java 21, Spring Data JPA + MySQL 8, Redis 7, Thymeleaf, Flyway. 
 
 ## Run it
 

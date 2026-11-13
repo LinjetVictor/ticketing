@@ -23,7 +23,6 @@ spring:
     cache: false
 
 server:
-  port: ${PORT:8080}
   shutdown: graceful
 
 management:
